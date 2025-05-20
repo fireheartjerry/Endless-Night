@@ -7,14 +7,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static final int GAME_HEIGHT = 720;
 
     public GameState game_state;
-    private CardLayout screen_manager = new CardLayout();
-    private Thread game_thread;
+    
+    private final Font game_font;
+    private final CardLayout screen_manager = new CardLayout();
+    private final Thread game_thread;
 
-    private SoundManager sound_manager;
+    private final SoundManager sound_manager;
 
     public GamePanel() {
         game_state = GameState.INTRODUCTION;
         sound_manager = new SoundManager();
+        game_font = loadFont("/assets/gamefont.ttf", 64f);
         setPreferredSize(new Dimension(GAME_WIDTH, GAME_HEIGHT));
         setFocusable(true);
         addKeyListener(this);
@@ -22,7 +25,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         setLayout(screen_manager);
 
         add(new IntroScreen(this), GameState.INTRODUCTION.name());
-        add(new PlayScreen(this), GameState.MAIN_MENU.name());
+        add(new MainMenu(this), GameState.MAIN_MENU.name());
 
         screen_manager.show(this, game_state.name());
         sound_manager.playBackgroundMusic("intro");
@@ -68,6 +71,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
         screen_manager.show(this, game_state.name());
         requestFocusInWindow();
+    }
+
+    public Font getGameFont() {
+        return game_font;
+    }
+
+    private Font loadFont(String path, float size) {
+        try {
+            Font f = Font.createFont(Font.TRUETYPE_FONT, IntroScreen.class.getResourceAsStream(path));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(f);
+            return f.deriveFont(size);
+        } catch (Exception e) {
+            return new Font("SansSerif", Font.BOLD, (int) size);
+        }
     }
 
     @Override

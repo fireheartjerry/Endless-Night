@@ -1,18 +1,21 @@
-
 import java.awt.*;
 import javax.swing.*;
 
 public class GameButton extends JButton {
 
-    private static final Color PURPLE = new Color(137, 100, 255);
-    private static final int ARC = 40;
+    private Color bg_colour;
 
     GameButton(String txt) {
         super(txt);
+        bg_colour = new Color(140, 82, 255);
         setFocusPainted(false);
         setBorderPainted(false);
         setContentAreaFilled(false);
         setForeground(Color.WHITE);
+    }
+
+    public void setColor(Color color) {
+        bg_colour = color;
     }
 
     @Override
@@ -21,14 +24,15 @@ public class GameButton extends JButton {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         int w = getWidth(), h = getHeight();
-        g2.setColor(PURPLE);
-        g2.fillRoundRect(0, 0, w, h, ARC, ARC);
+        g2.setColor(bg_colour);
+        g2.fillRect(0, 0, w, h);
+
+        super.paintComponent(g2); // Call super to ensure text and other components are painted
 
         g2.setStroke(new BasicStroke(4f));
-        g2.setColor(Color.BLACK);
-        g2.drawRoundRect(0, 0, w, h, ARC, ARC);
+        g2.setColor(Color.WHITE);
+        g2.drawRect(0, 0, w - 1, h - 1); // Draw the black border
 
-        super.paintComponent(g2);
         g2.dispose();
     }
 }

@@ -1,9 +1,6 @@
-javac GameFrame.java
-javac GamePanel.java
-javac Main.java
-javac IntroScreen.java
-javac GameButton.java
-javac SoundManager.java
+@echo off
+echo Compiling Java files...
+javac *.java
 
 pause
 java Main

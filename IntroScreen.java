@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -6,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class IntroScreen extends JPanel {
+
     private static final String[] LORE = {
         "Welcome to Endless Night, where the sun's descent has led to the beginning of humanity's greatest trial.",
         "Following a catastrophic celestial event that plunged the world into darkness, primordial monsters once hidden in the Earth's crevices have awoken from their slumber. Drawn to the surface by the absence of light, they began hunting human populations to feast upon and feed their strength.",
@@ -25,17 +27,33 @@ public class IntroScreen extends JPanel {
         PARENT = parent;
         setLayout(null);
         setOpaque(false);
-        TITLE_FONT = loadFont("/assets/gamefont.ttf", 64f);
+        TITLE_FONT = parent.getGameFont().deriveFont(Font.BOLD, 72f);
 
-        TITLE_LABEL = new JLabel("Endless Night", SwingConstants.CENTER);
-        TITLE_LABEL.setFont(TITLE_FONT.deriveFont(72f));
-        TITLE_LABEL.setForeground(new Color(137, 100, 255));
+        TITLE_LABEL = new JLabel("Endless Night", SwingConstants.CENTER) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2.setFont(TITLE_FONT);
+                FontMetrics fm = g2.getFontMetrics();
+                String text = getText();
+                int tw = fm.stringWidth(text);
+                // gradient from purple to gold
+                GradientPaint gp = new GradientPaint(
+                        0, 0, new Color(137, 100, 255),
+                        tw, 0, new Color(140, 143, 187)
+                );
+                g2.setPaint(gp);
+                g2.drawString(text, 0, fm.getAscent());
+                g2.dispose();
+            }
+        };
         add(TITLE_LABEL);
 
-        lore_label = new JLabel();
-        lore_label.setFont(TITLE_FONT.deriveFont(28f));
+        lore_label = new JLabel("", SwingConstants.CENTER);
+        lore_label.setFont(parent.getGameFont().deriveFont(28f));
         lore_label.setForeground(Color.WHITE);
-        lore_label.setHorizontalAlignment(SwingConstants.CENTER);
         add(lore_label);
 
         loadBackground();
@@ -45,81 +63,83 @@ public class IntroScreen extends JPanel {
 
     private void loadBackground() {
         try {
-            background_image = ImageIO.read(getClass().getResourceAsStream("/assets/images/backgrounds/introbg.jpg"));
+            background_image = ImageIO.read(
+                    getClass().getResourceAsStream("/assets/images/backgrounds/introbg.jpg")
+            );
         } catch (IOException e) {
             background_image = null;
         }
     }
 
     private void setupButtons() {
-        int btn_w = 180;
-        int btn_h = 60;
-        int gap = 20;
-        int total_w = btn_w * 3 + gap * 2;
-        int start_x = (GamePanel.GAME_WIDTH - total_w) / 2;
-        int btn_y = GamePanel.GAME_HEIGHT - btn_h - 60;
+        int btnW = 180, btnH = 60, gap = 20;
+        int totalW = btnW * 3 + gap * 2;
+        int startX = (GamePanel.GAME_WIDTH - totalW) / 2;
+        int y = GamePanel.GAME_HEIGHT - btnH - 60;
 
-        addNavButton("Back", start_x, btn_y, btn_w, btn_h, () -> changeIndex(-1));
-        addNavButton("Next", start_x + btn_w + gap, btn_y, btn_w, btn_h, () -> changeIndex(1));
-        addNavButton("Skip", start_x + (btn_w + gap) * 2, btn_y, btn_w, btn_h, this::finishIntro);
+        addNav("Back", startX, y, btnW, btnH, () -> changeIndex(-1));
+        addNav("Next", startX + (btnW + gap), y, btnW, btnH, () -> changeIndex(1));
+        addNav("Skip", startX + 2 * (btnW + gap), y, btnW, btnH, this::finishIntro);
     }
 
-    private void addNavButton(String text, int x, int y, int w, int h, Runnable action) {
-        GameButton button = new GameButton(text);
-        button.setFont(TITLE_FONT.deriveFont(30f));
-        button.setBounds(x, y, w, h);
-        button.addActionListener(e -> action.run());
-        button.addMouseListener(new MouseAdapter() {
+    private void addNav(String txt, int x, int y, int w, int h, Runnable action) {
+        GameButton btn = new GameButton(txt);
+        btn.setFont(TITLE_FONT.deriveFont(30f));
+        btn.setBounds(x, y, w, h);
+        btn.setForeground(Color.WHITE);
+        btn.addActionListener(e -> action.run());
+        btn.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                button.setFont(TITLE_FONT.deriveFont(35f));
+                btn.setFont(TITLE_FONT.deriveFont(35f));
             }
+
             public void mouseExited(MouseEvent e) {
-                button.setFont(TITLE_FONT.deriveFont(30f));
+                btn.setFont(TITLE_FONT.deriveFont(30f));
             }
         });
-        add(button);
+        add(btn);
     }
 
     private void changeIndex(int delta) {
-        int new_index = index + delta;
-        if (new_index < 0 || new_index >= LORE.length) {
+        int ni = index + delta;
+        if (ni < 0 || ni >= LORE.length) {
             finishIntro();
         } else {
-            index = new_index;
+            index = ni;
             refreshContent();
         }
     }
 
     private void refreshContent() {
-        TITLE_LABEL.setText("Endless Night");
         String family = TITLE_FONT.getFamily();
-        String html =
-            "<html><div style='" +
-            "font-family:" + family + ";" +
-            "font-size:28px;" +
-            "text-align:center;" +
-            "width:825px;'>" +
-            LORE[index] +
-            "</div></html>";
+        String html = "<html><div style='"
+                + "font-family:" + family + ";"
+                + "font-size:28px;"
+                + "text-align:center;"
+                + "width:825px;'>"
+                + LORE[index]
+                + "</div></html>";
         lore_label.setText(html);
         positionComponents();
     }
 
     private void finishIntro() {
-        PARENT.showScreen("play");
+        PARENT.showScreen("main_menu");
     }
 
     private void positionComponents() {
         int w = getWidth() > 0 ? getWidth() : GamePanel.GAME_WIDTH;
         int h = getHeight() > 0 ? getHeight() : GamePanel.GAME_HEIGHT;
 
-        FontMetrics tfm = TITLE_LABEL.getFontMetrics(TITLE_LABEL.getFont());
-        int tw = tfm.stringWidth(TITLE_LABEL.getText());
-        int th = tfm.getHeight();
+        // Title
+        FontMetrics fm = TITLE_LABEL.getFontMetrics(TITLE_FONT);
+        int tw = fm.stringWidth(TITLE_LABEL.getText());
+        int th = fm.getHeight();
         TITLE_LABEL.setBounds((w - tw) / 2, h / 6 - th / 2, tw, th);
 
-        Dimension lore_dim = lore_label.getPreferredSize();
-        lore_label.setBounds((w - lore_dim.width) / 2, h / 2 - lore_dim.height / 2, lore_dim.width, lore_dim.height);
+        // Lore
+        Dimension ld = lore_label.getPreferredSize();
+        lore_label.setBounds((w - ld.width) / 2, h / 2 - ld.height / 2, ld.width, ld.height);
     }
 
     @Override
@@ -137,16 +157,5 @@ public class IntroScreen extends JPanel {
     public void invalidate() {
         super.invalidate();
         positionComponents();
-    }
-
-    private static Font loadFont(String path, float size) {
-        try {
-            Font f = Font.createFont(Font.TRUETYPE_FONT, IntroScreen.class.getResourceAsStream(path));
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(f);
-            return f.deriveFont(size);
-        } catch (Exception e) {
-            return new Font("SansSerif", Font.BOLD, (int) size);
-        }
     }
 }

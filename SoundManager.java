@@ -19,7 +19,7 @@ public class SoundManager {
             clip.open(audio_stream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            volumeControl.setValue(-25.0f); // Reduce volume.
+            volumeControl.setValue(-15.0f); // Reduce volume.
             clip.start();
         } catch (Exception e) {
             System.out.println("An error occurred while playing background music.");
