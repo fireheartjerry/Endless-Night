@@ -3,7 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
-    public static final int GAME_WIDTH = 1920;
+    public static final int GAME_WIDTH = 1283;
     public static final int GAME_HEIGHT = 720;
 
     public GameState game_state;
@@ -26,6 +26,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         add(new IntroScreen(this), GameState.INTRODUCTION.name());
         add(new MainMenu(this), GameState.MAIN_MENU.name());
+        add(new HowToPlayScreen(this), GameState.HOW_TO_PLAY.name());
 
         screen_manager.show(this, game_state.name());
         sound_manager.playBackgroundMusic("intro");
@@ -61,16 +62,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
             last_time += NS_PER_UPDATE;
         }
-    }
-
-    public void showScreen(String name) {
+    }    public void showScreen(String name) {
         try {
             game_state = GameState.valueOf(name.toUpperCase());
+            
+            // Check if the screen exists before switching
+            if (game_state == GameState.PLAYING || 
+                game_state == GameState.HIGH_SCORES || 
+                game_state == GameState.CREDITS) {
+                System.out.println("Screen not yet implemented: " + name);
+                return;
+            }
+            
+            screen_manager.show(this, game_state.name());
+            requestFocusInWindow();
         } catch (IllegalArgumentException e) {
+            System.out.println("Invalid screen name: " + name);
             return;
         }
-        screen_manager.show(this, game_state.name());
-        requestFocusInWindow();
     }
 
     public Font getGameFont() {

@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class MainMenu extends JPanel {
+
     private static final int HS_W = 200, HS_H = 50;
     private static final int BTN_H_SMALL = 100, BTN_W_SMALL = 300;
     private static final int BTN_H_BIG = 140, BTN_W_BIG = 400;
@@ -34,14 +35,15 @@ public class MainMenu extends JPanel {
         highscores_button = makeMenuButton("Highscores", 20f, e -> PARENT.showScreen("scores"));
         highscores_button.setColor(new Color(135, 123, 182));
         add(highscores_button);
-
-        how_button = makeMenuButton("HOW 2 PLAY", 35f, e -> PARENT.showScreen("how"));
+        how_button = makeMenuButton("HOW 2 PLAY", 35f, e -> PARENT.game_state = GameState.HOW_TO_PLAY);
         add(how_button);
 
-        credits_button = makeMenuButton("CREDITS", 40f, e -> PARENT.showScreen("credits"));
+        credits_button = makeMenuButton("CREDITS", 40f, e -> PARENT.game_state = GameState.CREDITS);
         add(credits_button);
 
-        start_button = makeMenuButton("START", 64f, e -> { PARENT.showScreen("play"); });
+        start_button = makeMenuButton("START", 64f, e -> {
+            PARENT.game_state = GameState.PLAYING;
+        });
         start_button.setColor(new Color(76, 72, 144));
         add(start_button);
 
@@ -62,7 +64,7 @@ public class MainMenu extends JPanel {
         b.addActionListener(action);
         b.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                b.setFont(UI_FONT.deriveFont(Font.BOLD, size + 4f));
+                b.setFont(UI_FONT.deriveFont(Font.BOLD, size*1.15f));
             }
 
             public void mouseExited(MouseEvent e) {
