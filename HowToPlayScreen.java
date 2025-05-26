@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+
 public class HowToPlayScreen extends JPanel {
 
     private static class Page {
