@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         game_font = loadFont("/assets/gamefont.ttf", 64f);
         player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 50, 50, 100, 10, null);
         enemies = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 100; i++) {
             enemies.add(createEnemy());
         }
 
