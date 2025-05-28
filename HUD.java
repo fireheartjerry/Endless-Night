@@ -1,43 +1,43 @@
 import java.awt.*;
 
 public class HUD {
-    private final HealthBar healthBar;
-    private final WaveProgressBar waveProgressBar;
-    private final GameTimer gameTimer;
+    private final HealthBar HEALTH_BAR;
+    private final WaveProgressBar WAVE_PROGRESS_BAR;
+    private final GameTimer GAME_TIMER;
     
     public HUD(Player player, Font font) {
-        this.healthBar = new HealthBar(player);
-        this.waveProgressBar = new WaveProgressBar(font);
-        this.gameTimer = new GameTimer(font);
+        this.HEALTH_BAR = new HealthBar(player);
+        this.WAVE_PROGRESS_BAR = new WaveProgressBar(font);
+        this.GAME_TIMER = new GameTimer(font);
     }
     
     public void startTimer() {
-        gameTimer.start();
+        GAME_TIMER.start();
     }
     
     public void stopTimer() {
-        gameTimer.stop();
+        GAME_TIMER.stop();
     }
     
     public void resetTimer() {
-        gameTimer.reset();
+        GAME_TIMER.reset();
     }
     
     public void updateWaveProgress(int enemiesDefeated, int totalRequired) {
-        waveProgressBar.updateProgress(enemiesDefeated, totalRequired);
+        WAVE_PROGRESS_BAR.updateProgress(enemiesDefeated, totalRequired);
     }
     
     public void setCurrentWave(int wave) {
-        waveProgressBar.setCurrentWave(wave);
+        WAVE_PROGRESS_BAR.setCurrentWave(wave);
     }
     
     public long getElapsedTimeMillis() {
-        return gameTimer.getElapsedTimeMillis();
+        return GAME_TIMER.getElapsedTimeMillis();
     }
     
     public void draw(Graphics2D g2d, int screenWidth) {
-        healthBar.draw(g2d);
-        waveProgressBar.draw(g2d, screenWidth);
-        gameTimer.draw(g2d, screenWidth);
+        HEALTH_BAR.draw(g2d);
+        WAVE_PROGRESS_BAR.draw(g2d, screenWidth);
+        GAME_TIMER.draw(g2d, screenWidth);
     }
 }

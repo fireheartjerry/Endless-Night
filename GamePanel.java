@@ -18,16 +18,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private int enemiesDefeated = 0;
     private int enemiesRequiredForNextWave = 10;
 
-    private final Font game_font;
-    private final CardLayout screen_manager = new CardLayout();
-    private final Thread game_thread;
+    private final Font GAME_FONT;
+    private final CardLayout SCREEN_MANAGER = new CardLayout();
+    private final Thread GAME_THREAD;
 
-    private final SoundManager sound_manager;
+    private final SoundManager SOUND_MANAGER;
 
     public GamePanel() {
         game_state = GameState.PLAYING;
-        sound_manager = new SoundManager();
-        game_font = loadFont("/assets/gamefont.ttf", 64f);
+        SOUND_MANAGER = new SoundManager();
+        game_font = loadFont("/assets/GAME_FONT.ttf", 64f);
         player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 50, 50, 100, 10, null);
         enemies = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
@@ -42,17 +42,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         setFocusable(true);
         addKeyListener(this);
         setBackground(Color.BLACK);
-        setLayout(screen_manager);
+        setLayout(SCREEN_MANAGER);
 
         add(new IntroScreen(this), GameState.INTRODUCTION.name());
         add(new MainMenu(this), GameState.MAIN_MENU.name());
         add(new HowToPlayScreen(this), GameState.HOW_TO_PLAY.name());
         add(new PlayScreen(this), GameState.PLAYING.name());
 
-        screen_manager.show(this, game_state.name());
-        sound_manager.playBackgroundMusic("intro");
-        game_thread = new Thread(this);
-        game_thread.start();
+        SCREEN_MANAGER.show(this, game_state.name());
+        SOUND_MANAGER.playBackgroundMusic("intro");
+        GAME_THREAD = new Thread(this);
+        GAME_THREAD.start();
     }
 
     private void init() {
@@ -134,7 +134,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 }
             }
 
-            screen_manager.show(this, game_state.name());
+            SCREEN_MANAGER.show(this, game_state.name());
             repaint();
 
             long elapsed = System.nanoTime() - currentTime;
@@ -160,7 +160,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 hud.stopTimer();
             }
 
-            screen_manager.show(this, game_state.name());
+            SCREEN_MANAGER.show(this, game_state.name());
             requestFocusInWindow();
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid screen name: " + name);

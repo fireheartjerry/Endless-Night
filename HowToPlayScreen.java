@@ -11,12 +11,12 @@ public class HowToPlayScreen extends JPanel {
 
     private static class Page {
 
-        final String title;
-        final String html;
+        final String TITLE;
+        final String HTML;
 
         Page(String title, String html) {
-            this.title = title;
-            this.html = html;
+            this.TITLE = title;
+            this.HTML = html;
         }
     }
 
@@ -48,29 +48,29 @@ public class HowToPlayScreen extends JPanel {
     };
     private final GamePanel PARENT;
     private final Font UI_FONT;
-    private final JLabel titleLabel, textLabel;
-    private final GameButton prevBtn, nextBtn, backBtn;
+    private final JLabel TITLE_LABEL, TEXT_LABEL;
+    private final GameButton PREV_BTN, NEXT_BTN, BACK_BTN;
     private BufferedImage bgImage;
     private int pageIndex = 0;
 
     public HowToPlayScreen(GamePanel parent) {
         PARENT = parent;
-        UI_FONT = parent.getGameFont();
+        UI_FONT = PARENT.getGameFont();
         setLayout(null);
         setOpaque(false);
         loadBackground();
 
-        titleLabel = new JLabel("", SwingConstants.CENTER);
-        titleLabel.setFont(UI_FONT.deriveFont(Font.BOLD, 48f));
-        titleLabel.setForeground(Color.WHITE);
+        TITLE_LABEL = new JLabel("", SwingConstants.CENTER);
+        TITLE_LABEL.setFont(UI_FONT.deriveFont(Font.BOLD, 48f));
+        TITLE_LABEL.setForeground(Color.WHITE);
 
-        textLabel = new JLabel("", SwingConstants.CENTER);
-        textLabel.setFont(UI_FONT.deriveFont(20f));
-        textLabel.setForeground(Color.WHITE);
+        TEXT_LABEL = new JLabel("", SwingConstants.CENTER);
+        TEXT_LABEL.setFont(UI_FONT.deriveFont(20f));
+        TEXT_LABEL.setForeground(Color.WHITE);
 
-        prevBtn = makeNav("Previous", e -> changePage(-1));
-        nextBtn = makeNav("Next", e -> changePage(+1));
-        backBtn = makeNav("Back", e -> {
+        PREV_BTN = makeNav("Previous", e -> changePage(-1));
+        NEXT_BTN = makeNav("Next", e -> changePage(+1));
+        BACK_BTN = makeNav("Back", e -> {
             changePage(-pageIndex);
             PARENT.showScreen("main_menu");
         }); // Configure tooltips
@@ -125,22 +125,22 @@ public class HowToPlayScreen extends JPanel {
         removeAll();
 
         Page p = PAGES[pageIndex];
-        titleLabel.setText(p.title);
-        add(titleLabel);
-        add(prevBtn);
-        add(nextBtn);
-        add(backBtn);
+        TITLE_LABEL.setText(p.title);
+        add(TITLE_LABEL);
+        add(PREV_BTN);
+        add(NEXT_BTN);
+        add(BACK_BTN);
 
-        if ("Monsters, Bosses, & Skills".equals(p.title)) {
+        if ("Monsters, Bosses, & Skills".equals(p.TITLE)) {
             showIconGrid();
         } else {
-            textLabel.setText(p.html);
-            add(textLabel);
+            TEXT_LABEL.setText(p.HTML);
+            add(TEXT_LABEL);
         }
 
         positionComponents();
-        prevBtn.setEnabled(pageIndex > 0);
-        nextBtn.setEnabled(pageIndex < PAGES.length - 1);
+        PREV_BTN.setEnabled(pageIndex > 0);
+        NEXT_BTN.setEnabled(pageIndex < PAGES.length - 1);
         revalidate();
         repaint();
     }
@@ -246,9 +246,9 @@ public class HowToPlayScreen extends JPanel {
         int btnW = 140, btnH = 50, gap = 20;
         int startX = (w - (btnW * 3 + gap * 2)) / 2;
         int y = h - btnH - 40;
-        prevBtn.setBounds(startX - 30, y, btnW + 30, btnH);
-        nextBtn.setBounds(startX + btnW + gap, y, btnW, btnH);
-        backBtn.setBounds(startX + 2 * (btnW + gap), y, btnW, btnH);
+        PREV_BTN.setBounds(startX - 30, y, btnW + 30, btnH);
+        NEXT_BTN.setBounds(startX + btnW + gap, y, btnW, btnH);
+        BACK_BTN.setBounds(startX + 2 * (btnW + gap), y, btnW, btnH);
     }
 
     @Override

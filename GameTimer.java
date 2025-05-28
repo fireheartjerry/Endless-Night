@@ -7,14 +7,14 @@ public class GameTimer {
     
     private long startTimeMillis;
     private boolean running;
-    private final Font timerFont;
-    private final Color textColor = Color.WHITE;
-    private final Color shadowColor = new Color(0, 0, 0, 150);
+    private final Font TIMER_FONT;
+    private final Color TEXT_COLOR = Color.WHITE;
+    private final Color SHADOW_COLOR = new Color(0, 0, 0, 150);
     
-    private final DecimalFormat timeFormat = new DecimalFormat("00");
+    private final DecimalFormat TIME_FORMAT = new DecimalFormat("00");
     
     public GameTimer(Font font) {
-        this.timerFont = font.deriveFont(24f);
+        this.TIMER_FONT = font.deriveFont(24f);
         this.running = false;
     }
     
@@ -50,12 +50,12 @@ public class GameTimer {
         
         String timeString;
         if (hours > 0) {
-            timeString = hours + ":" + timeFormat.format(minutes) + ":" + timeFormat.format(seconds);
+            timeString = hours + ":" + TIME_FORMAT.format(minutes) + ":" + TIME_FORMAT.format(seconds);
         } else {
-            timeString = minutes + ":" + timeFormat.format(seconds);
+            timeString = minutes + ":" + TIME_FORMAT.format(seconds);
         }
         
-        g2d.setFont(timerFont);
+        g2d.setFont(TIMER_FONT);
         
         // Calculate position (top-right of screen)
         FontMetrics fm = g2d.getFontMetrics();
@@ -64,11 +64,11 @@ public class GameTimer {
         int textY = TOP_MARGIN + fm.getAscent();
         
         // Draw text shadow for better visibility
-        g2d.setColor(shadowColor);
+        g2d.setColor(SHADOW_COLOR);
         g2d.drawString(timeString, textX + 2, textY + 2);
         
         // Draw timer text
-        g2d.setColor(textColor);
+        g2d.setColor(TEXT_COLOR);
         g2d.drawString(timeString, textX, textY);
     }
 }
