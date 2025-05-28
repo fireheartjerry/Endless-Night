@@ -14,8 +14,8 @@ public class HowToPlayScreen extends JPanel {
         final String TITLE;
         final String HTML;
 
-        Page(String title, String html) {
-            this.TITLE = title;
+        Page(String TITLE, String html) {
+            this.TITLE = TITLE;
             this.HTML = html;
         }
     }
@@ -125,7 +125,7 @@ public class HowToPlayScreen extends JPanel {
         removeAll();
 
         Page p = PAGES[pageIndex];
-        TITLE_LABEL.setText(p.title);
+        TITLE_LABEL.setText(p.TITLE);
         add(TITLE_LABEL);
         add(PREV_BTN);
         add(NEXT_BTN);
@@ -240,8 +240,8 @@ public class HowToPlayScreen extends JPanel {
         int w = getWidth() > 0 ? getWidth() : GamePanel.GAME_WIDTH;
         int h = getHeight() > 0 ? getHeight() : GamePanel.GAME_HEIGHT;
 
-        titleLabel.setBounds(50, 50, w - 100, 50);
-        textLabel.setBounds((w - 900) / 2, 130, 900, 480);
+        TITLE_LABEL.setBounds(50, 50, w - 100, 50);
+        TEXT_LABEL.setBounds((w - 900) / 2, 130, 900, 480);
 
         int btnW = 140, btnH = 50, gap = 20;
         int startX = (w - (btnW * 3 + gap * 2)) / 2;

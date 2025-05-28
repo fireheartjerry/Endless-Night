@@ -16,7 +16,7 @@ public class WaveProgressBar {
     private final Color TEXT_COLOR = Color.WHITE;
     
     public WaveProgressBar(Font font) {
-        this.wave_Font = font.deriveFont(18f);
+        this.WAVE_FONT = font.deriveFont(18f);
         this.currentEnemiesDefeated = 0;
         this.totalEnemiesRequired = 10; // Default, can be updated
         this.currentWave = 1;

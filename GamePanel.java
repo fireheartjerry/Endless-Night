@@ -27,14 +27,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public GamePanel() {
         game_state = GameState.PLAYING;
         SOUND_MANAGER = new SoundManager();
-        game_font = loadFont("/assets/GAME_FONT.ttf", 64f);
+        GAME_FONT = loadFont("/assets/game_font.ttf", 64f);
         player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 50, 50, 100, 10, null);
         enemies = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             enemies.add(createEnemy());
         }
 
-        hud = new HUD(player, game_font);
+        hud = new HUD(player, GAME_FONT);
         hud.setCurrentWave(currentWave);
         hud.updateWaveProgress(enemiesDefeated, enemiesRequiredForNextWave);
 
@@ -74,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         int x = (int) Math.round(centerX + radius * Math.cos(angle));
         int y = (int) Math.round(centerY + radius * Math.sin(angle));
 
-        return new Enemy(x, y, 40, 40, 100, 1, null);
+        return new Enemy(x, y, 20, 20, 100, 1, null);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     public Font getGameFont() {
-        return game_font;
+        return GAME_FONT;
     }
 
     private Font loadFont(String path, float size) {
