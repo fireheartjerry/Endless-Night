@@ -6,20 +6,29 @@ import java.util.function.BiConsumer;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-
+/**
+ * This class represents the "How To Play" screen in the game. It provides
+ * instructions and information about the game mechanics, monsters, bosses, and
+ * skills.
+ */
 public class HowToPlayScreen extends JPanel {
 
+    /**
+     * Inner static class representing a single page of the "How To Play" screen.
+     * Each page has a title and HTML content.
+     */
     private static class Page {
+        final String TITLE; // Title of the page
+        final String HTML; // HTML content of the page
 
-        final String TITLE;
-        final String HTML;
-
-        Page(String title, String html) {
-            this.TITLE = title;
+        // Constructor to initialize the title and HTML content of the page
+        Page(String TITLE, String html) {
+            this.TITLE = TITLE;
             this.HTML = html;
         }
     }
 
+    // Array of pages to display in the "How To Play" screen
     private static final Page[] PAGES = {
             new Page(
                     "Game Mechanics Part 1",
@@ -46,13 +55,15 @@ public class HowToPlayScreen extends JPanel {
                     "" // handled specially
             )
     };
-    private final GamePanel PARENT;
-    private final Font UI_FONT;
-    private final JLabel TITLE_LABEL, TEXT_LABEL;
-    private final GameButton PREV_BTN, NEXT_BTN, BACK_BTN;
-    private BufferedImage bgImage;
-    private int pageIndex = 0;
 
+    private final GamePanel PARENT; // Reference to the parent game panel
+    private final Font UI_FONT; // Font used for UI elements
+    private final JLabel TITLE_LABEL, TEXT_LABEL; // Labels for the title and text content
+    private final GameButton PREV_BTN, NEXT_BTN, BACK_BTN; // Navigation buttons
+    private BufferedImage bgImage; // Background image for the screen
+    private int pageIndex = 0; // Current page index
+
+    // Constructor to initialize the "How To Play" screen
     public HowToPlayScreen(GamePanel parent) {
         PARENT = parent;
         UI_FONT = PARENT.getGameFont();
@@ -60,20 +71,25 @@ public class HowToPlayScreen extends JPanel {
         setOpaque(false);
         loadBackground();
 
+        // Initialize the title label
         TITLE_LABEL = new JLabel("", SwingConstants.CENTER);
         TITLE_LABEL.setFont(UI_FONT.deriveFont(Font.BOLD, 48f));
         TITLE_LABEL.setForeground(Color.WHITE);
 
+        // Initialize the text label
         TEXT_LABEL = new JLabel("", SwingConstants.CENTER);
         TEXT_LABEL.setFont(UI_FONT.deriveFont(20f));
         TEXT_LABEL.setForeground(Color.WHITE);
 
+        // Initialize navigation buttons
         PREV_BTN = makeNav("Previous", e -> changePage(-1));
         NEXT_BTN = makeNav("Next", e -> changePage(+1));
         BACK_BTN = makeNav("Back", e -> {
             changePage(-pageIndex);
             PARENT.showScreen("main_menu");
-        }); // Configure tooltips
+        });
+
+        // Configure tooltips
         ToolTipManager.sharedInstance().setInitialDelay(100);
         UIManager.put("ToolTip.background", new Color(15, 15, 25, 230));
         UIManager.put("ToolTip.foreground", Color.WHITE);
@@ -82,12 +98,13 @@ public class HowToPlayScreen extends JPanel {
                 BorderFactory.createLineBorder(new Color(0, 200, 255), 1, true));
         UIManager.put("ToolTip.maxWidth", 300);
 
-        // Register our custom tooltip class
+        // Register custom tooltip class
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
 
         refreshPage();
     }
 
+    // Loads the background image for the screen
     private void loadBackground() {
         try {
             bgImage = ImageIO.read(
@@ -97,6 +114,7 @@ public class HowToPlayScreen extends JPanel {
         }
     }
 
+    // Creates a navigation button with the specified text and action listener
     private GameButton makeNav(String text, ActionListener al) {
         GameButton b = new GameButton(text);
         b.setFont(UI_FONT.deriveFont(28f));
@@ -116,16 +134,18 @@ public class HowToPlayScreen extends JPanel {
         return b;
     }
 
+    // Changes the current page by the specified delta
     private void changePage(int delta) {
         pageIndex = Math.max(0, Math.min(PAGES.length - 1, pageIndex + delta));
         refreshPage();
     }
 
+    // Refreshes the content of the current page
     private void refreshPage() {
         removeAll();
 
         Page p = PAGES[pageIndex];
-        TITLE_LABEL.setText(p.title);
+        TITLE_LABEL.setText(p.TITLE);
         add(TITLE_LABEL);
         add(PREV_BTN);
         add(NEXT_BTN);
@@ -145,12 +165,14 @@ public class HowToPlayScreen extends JPanel {
         repaint();
     }
 
+    // Creates a tooltip with the specified header and body
     private String makeTip(String header, String body) {
         return "<html><div style='text-align:left; width:280px; word-wrap:break-word;'>"
                 + "<span style=\"font-size:14px;color:#00d0ff\"><b>" + header + "</b></span><br>"
                 + "<span style=\"font-size:12px;color:#dddddd\">" + body + "</span></div></html>";
     }
 
+    // Displays the icon grid for monsters, bosses, and skills
     private void showIconGrid() {
         int gap = 16;
         int size = 64;
@@ -193,7 +215,7 @@ public class HowToPlayScreen extends JPanel {
                 "Spawns immortal light angels that have passive aura attack and limited lifespan.<br><br>Level 9: \"archangel\" - spawns a single very powerful immortal angel which permanently stays on the map and shoots its own projectiles and aura.",
                 "Shoots omni-directional projectiles of starlight regularly.<br><br>Level 9: \"cosmic cataclysm\" - massive light meteor showers down on mouse every 5 seconds."
 
-            };
+        };
 
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
@@ -236,12 +258,13 @@ public class HowToPlayScreen extends JPanel {
         add(container);
     }
 
+    // Positions the components on the screen
     private void positionComponents() {
         int w = getWidth() > 0 ? getWidth() : GamePanel.GAME_WIDTH;
         int h = getHeight() > 0 ? getHeight() : GamePanel.GAME_HEIGHT;
 
-        titleLabel.setBounds(50, 50, w - 100, 50);
-        textLabel.setBounds((w - 900) / 2, 130, 900, 480);
+        TITLE_LABEL.setBounds(50, 50, w - 100, 50);
+        TEXT_LABEL.setBounds((w - 900) / 2, 130, 900, 480);
 
         int btnW = 140, btnH = 50, gap = 20;
         int startX = (w - (btnW * 3 + gap * 2)) / 2;
@@ -251,6 +274,7 @@ public class HowToPlayScreen extends JPanel {
         BACK_BTN.setBounds(startX + 2 * (btnW + gap), y, btnW, btnH);
     }
 
+    // Paints the background image with transparency
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

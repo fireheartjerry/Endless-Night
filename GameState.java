@@ -1,3 +1,4 @@
+// Game states for a game application, representing different phases or screens of the game.
 public enum GameState {
     INTRODUCTION,
     MAIN_MENU,
