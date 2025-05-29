@@ -168,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     public Font getGameFont() {
-        return game_font;
+        return GAME_FONT;
     }
 
     private Font loadFont(String path, float size) {
