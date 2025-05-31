@@ -45,7 +45,7 @@ public class PlayScreen extends JPanel {
         Graphics2D g2 = (Graphics2D) g.create();
 
         // Fill the background with a dark gray color.
-        g2.setColor(Color.DARK_GRAY);
+        g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
         // Draw the player character.
