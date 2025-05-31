@@ -40,7 +40,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         init();
 
         // Initialize player and enemies
-        player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 50, 50, 100, 10, null, this);
+        player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 70, 70, 100, 10, null, this);
         enemies = new CopyOnWriteArrayList<>();
         for (int i = 0; i < 10; i++) {
             enemies.add(createEnemy());
@@ -106,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         int x = (int) Math.round(centerX + radius * Math.cos(angle));
         int y = (int) Math.round(centerY + radius * Math.sin(angle));
 
-        return new Enemy(x, y, 20, 20, 5, 1, null, this);
+        return new Enemy(x, y, 20, 20, 50, 1, null, this);
     }
 
     // Paints the game components on the screen
