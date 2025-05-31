@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class operates the "How to Play" guide
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -6,11 +12,6 @@ import java.util.function.BiConsumer;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-/**
- * This class represents the "How To Play" screen in the game. It provides
- * instructions and information about the game mechanics, monsters, bosses, and
- * skills.
- */
 public class HowToPlayScreen extends JPanel {
 
     /**

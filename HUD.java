@@ -1,11 +1,11 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class manages and renders UI elements like the health bar, wave progress bar, timer, etc.
+*/
+
 import java.awt.*;
 
-/**
- * The HUD (Heads-Up Display) class is responsible for managing and rendering
- * the game's user interface elements, such as the health bar, wave progress
- * bar,
- * and game timer.
- */
 public class HUD {
     // The health bar component of the HUD, which displays the player's health.
     private final HealthBar HEALTH_BAR;

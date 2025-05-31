@@ -1,9 +1,13 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class represents teh main gameplay screen
+*/
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 
-// The PlayScreen class represents the main gameplay screen in the game.
-// It extends JPanel to allow for custom rendering and user interaction.
 public class PlayScreen extends JPanel {
 
     // Frames per second for the game rendering.

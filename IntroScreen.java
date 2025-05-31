@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class displays the introductory sceen of the game
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -5,8 +11,6 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-// IntroScreen class represents the introductory screen of the game "Endless Night".
-// It displays a title, a series of lore text, and navigation buttons to move through the lore or skip to the main menu.
 public class IntroScreen extends JPanel {
 
     // Array of lore text to be displayed sequentially on the screen.

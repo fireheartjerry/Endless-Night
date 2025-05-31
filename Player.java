@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class manages the player character and its properties
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;

@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class defines a skill with things like levels, cooldown, and instantaneous behaviour in game
+*/
+
 public class Skill {
     private String name;
     private int level;

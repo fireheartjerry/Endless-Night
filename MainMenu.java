@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class represents the game main menu screen
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -5,8 +11,6 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-// MainMenu class represents the main menu screen of the game.
-// It extends JPanel and contains buttons and a background image.
 public class MainMenu extends JPanel {
 
     // Constants for button dimensions and highscore button dimensions.

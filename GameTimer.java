@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class draws a timer on the top right of the player screen
+*/
+
 import java.awt.*;
 import java.text.DecimalFormat;
 

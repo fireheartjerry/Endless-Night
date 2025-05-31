@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class supports various vector operations
+*/
+
 public class Vector {
     // X component of the vector
     public float x;

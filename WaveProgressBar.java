@@ -1,6 +1,11 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class manages and displays the progress bar
+*/
+
 import java.awt.*;
 
-// This class represents a progress bar that visually displays the progress of enemies defeated in a wave-based game.
 public class WaveProgressBar {
     // Constants for the height of the progress bar and margins around it
     private static final int BAR_HEIGHT = 20;

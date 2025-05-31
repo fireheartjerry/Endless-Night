@@ -1,3 +1,10 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: The GamePanel class helps manage most of the behind the scenes game workings
+* including rendering, game state transitions, enemy waves, and the main game loop
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

@@ -1,7 +1,12 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class helps set up a game entity with position, size, velocity, and possibly sprite animations
+*/
+
 import java.awt.*;
 import java.awt.image.*;
 
-// The GameObject class represents a game entity with position, size, velocity, and optional sprite animations.
 public class GameObject extends Rectangle {
     // The width of the game object.
     protected final int WIDTH;

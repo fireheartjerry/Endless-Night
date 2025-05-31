@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class handles collisions with physics calculations!
+*/
+
 import java.awt.Rectangle;
 import java.util.List;
 

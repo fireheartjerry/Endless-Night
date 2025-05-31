@@ -1,4 +1,9 @@
-// Game states for a game application, representing different phases or screens of the game.
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class includes the possible game states with different phases/screens of the game
+*/
+
 public enum GameState {
     INTRODUCTION,
     MAIN_MENU,

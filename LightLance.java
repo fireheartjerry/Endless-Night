@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class operates the light lance skill with visuals and damage
+*/
+
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.ArrayList;

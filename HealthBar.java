@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class draws the player health bar
+*/
+
 import java.awt.*;
 import java.awt.geom.*;
 
