@@ -2,10 +2,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.*;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
     // Constants for game dimensions
     public static final int GAME_WIDTH = 1283;
     public static final int GAME_HEIGHT = 720;
@@ -13,7 +14,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Game state and core components
     public GameState game_state;
     public Player player;
-    public List<Enemy> enemies;
+    public CopyOnWriteArrayList<Enemy> enemies;
     public Map<String, Map<String, Object>> skill_map;
 
     // Heads-up display (HUD) and wave tracking
@@ -28,17 +29,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private final Thread GAME_THREAD;
 
     // Sound manager for background music and effects
-    private final SoundManager SOUND_MANAGER;
+    private final SoundManager SOUND_MANAGER; // Constructor initializes the game panel and its components
 
-    // Constructor initializes the game panel and its components
     public GamePanel() {
-        game_state = GameState.PLAYING;
+        game_state = GameState.INTRODUCTION;
         SOUND_MANAGER = new SoundManager();
-        GAME_FONT = loadFont("/assets/game_font.ttf", 64f);
+        GAME_FONT = loadFont("/assets/gamefont.ttf", 64f);
+
+        // Initialize skills map
+        init();
 
         // Initialize player and enemies
-        player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 50, 50, 100, 10, null);
-        enemies = new ArrayList<>();
+        player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 50, 50, 100, 10, null, this);
+        enemies = new CopyOnWriteArrayList<>();
         for (int i = 0; i < 10; i++) {
             enemies.add(createEnemy());
         }
@@ -51,9 +54,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         // Set up panel properties
         setPreferredSize(new Dimension(GAME_WIDTH, GAME_HEIGHT));
         setFocusable(true);
-        addKeyListener(this);
         setBackground(Color.BLACK);
         setLayout(SCREEN_MANAGER);
+
+        // Configure layout first before adding listeners to avoid leaking 'this'
+        configureScreens();
+
+        // Start the game thread
+        GAME_THREAD = new Thread(this);
+        GAME_THREAD.start();
+    }
+
+    // Configure screens and add listeners after constructor is complete
+    private void configureScreens() {
+        // Add key and mouse listeners
+        addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
 
         // Add screens to the card layout
         add(new IntroScreen(this), GameState.INTRODUCTION.name());
@@ -64,10 +81,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         // Show the initial screen and start background music
         SCREEN_MANAGER.show(this, game_state.name());
         SOUND_MANAGER.playBackgroundMusic("intro");
-
-        // Start the game thread
-        GAME_THREAD = new Thread(this);
-        GAME_THREAD.start();
     }
 
     // Initializes the skill map with predefined skills
@@ -93,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         int x = (int) Math.round(centerX + radius * Math.cos(angle));
         int y = (int) Math.round(centerY + radius * Math.sin(angle));
 
-        return new Enemy(x, y, 20, 20, 100, 1, null);
+        return new Enemy(x, y, 20, 20, 5, 1, null, this);
     }
 
     // Paints the game components on the screen
@@ -110,21 +123,56 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
             hud.draw(g2, GAME_WIDTH);
         }
-    }
+    } // Updates the positions of the player and enemies
 
-    // Updates the positions of the player and enemies
     public void move(float dt) {
         if (game_state == GameState.PLAYING) {
             player.move();
+            player.update(dt, enemies);
             for (Enemy enemy : enemies) {
                 enemy.update(dt, player);
+                enemy.updateDamageNumbers(dt);
             }
         }
-    }
+    } // Checks for collisions between game entities
 
-    // Checks for collisions between game entities
     public void checkCollisions(float dt) {
         Physics.resolveCollisions(game_state, player, enemies, dt);
+
+        // Remove dead enemies and spawn new ones
+        updateEnemies();
+    }
+
+    // Handles removing dead enemies and spawning new ones
+    private void updateEnemies() {
+        List<Enemy> deadEnemies = new ArrayList<>();
+        List<Enemy> newEnemies = new ArrayList<>();
+
+        for (Enemy enemy : enemies) {
+            if (enemy.isDead()) {
+                deadEnemies.add(enemy);
+                enemiesDefeated++;
+
+                // Collect a new enemy to be added later
+                newEnemies.add(createEnemy());
+
+                // Update wave progress
+                hud.updateWaveProgress(enemiesDefeated, enemiesRequiredForNextWave);
+
+                // Check if wave is complete
+                if (enemiesDefeated >= enemiesRequiredForNextWave) {
+                    currentWave++;
+                    enemiesDefeated = 0;
+                    enemiesRequiredForNextWave += 5; // Increase enemies required for next wave
+                    hud.setCurrentWave(currentWave);
+                    hud.updateWaveProgress(enemiesDefeated, enemiesRequiredForNextWave);
+                }
+            }
+        }
+
+        // Remove dead enemies and add new ones
+        enemies.removeAll(deadEnemies);
+        enemies.addAll(newEnemies);
     }
 
     // Main game loop
@@ -232,5 +280,46 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Handles key typed events (not used)
     @Override
     public void keyTyped(KeyEvent e) {
+    }
+
+    // Mouse position tracking
+    private Point mousePosition = new Point(0, 0);
+
+    // Mouse input handling @Override
+    public void mouseClicked(MouseEvent e) {
+        // The Light Lance now automatically fires, no need to handle mouse clicks
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // Not used
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // Not used
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Not used
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Not used
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+    }
+
+    public GamePanel getInstance() {
+        return this;
     }
 }

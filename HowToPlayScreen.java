@@ -108,7 +108,7 @@ public class HowToPlayScreen extends JPanel {
     private void loadBackground() {
         try {
             bgImage = ImageIO.read(
-                    getClass().getResourceAsStream("/assets/images/backgrounds/instructionsbg.jpg"));
+                    getClass().getResourceAsStream("/assets/images/backgrounds/instructionsbg.png"));
         } catch (IOException e) {
             bgImage = null;
         }
@@ -216,6 +216,16 @@ public class HowToPlayScreen extends JPanel {
                 "Shoots omni-directional projectiles of starlight regularly.<br><br>Level 9: \"cosmic cataclysm\" - massive light meteor showers down on mouse every 5 seconds."
 
         };
+        String[] monsterIcons = {
+                "shadeling.png",
+                "gloomspawn.png",
+                "vampire_bats.png",
+                "shadow_walker.png",
+                "obsidian_maw.png",
+                "withering_wraith.png",
+                "midnight_abyss.png",
+                "chaos_demon.png"
+        };
 
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
@@ -242,8 +252,35 @@ public class HowToPlayScreen extends JPanel {
                 JLabel icon = new JLabel() {
                 };
                 icon.setPreferredSize(new Dimension(size, size));
-                icon.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
-                icon.setIcon(new ImageIcon(new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB)));
+                                
+                if (names == monsterNames) {
+                    // Use actual monster icons
+                    try {
+                        BufferedImage img = ImageIO.read(getClass().getResourceAsStream("./assets/images/bordered_sprites/" + monsterIcons[i]));
+                        icon.setIcon(new ImageIcon(img.getScaledInstance(size, size, Image.SCALE_SMOOTH)));
+                    } catch (Exception e) {
+                        // Fallback to placeholder if image loading fails
+                        BufferedImage placeholderImg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                        Graphics2D g2d = placeholderImg.createGraphics();
+                        g2d.setColor(new Color(255, 0, 0, 100));
+                        g2d.fillRect(0, 0, size, size);
+                        g2d.setColor(Color.WHITE);
+                        g2d.drawRect(0, 0, size-1, size-1);
+                        g2d.dispose();
+                        icon.setIcon(new ImageIcon(placeholderImg));
+                    }
+                } else {
+                    // Use placeholder icons for bosses and skills
+                        BufferedImage placeholderImg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                        Graphics2D g2d = placeholderImg.createGraphics();
+                        g2d.setColor(new Color(255, 0, 0, 100));
+                        g2d.fillRect(0, 0, size, size);
+                        g2d.setColor(Color.WHITE);
+                        g2d.drawRect(0, 0, size-1, size-1);
+                        g2d.dispose();
+                        icon.setIcon(new ImageIcon(placeholderImg));
+                }
+
                 icon.setToolTipText(makeTip(names[i], tips[i]));
                 row.add(icon);
             }

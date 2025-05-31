@@ -20,7 +20,7 @@ public class SoundManager {
 
             // Create a Clip object to play the audio.
             Clip clip = AudioSystem.getClip();
-            clip.open(audio_stream);
+            //clip.open(audio_stream);
 
             // Set the clip to loop continuously.
             clip.loop(Clip.LOOP_CONTINUOUSLY);

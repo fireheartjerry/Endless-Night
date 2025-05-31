@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The Enemy class represents an enemy entity in the game.
@@ -20,6 +21,9 @@ public final class Enemy extends Entity {
     private static final float SEPARATION_RADIUS = 100f; // Radius for separation behavior
     private static final float RECOVERY_RATE = 0.05f; // Recovery rate after knockback
 
+    // Collection of damage numbers for this enemy
+    private final CopyOnWriteArrayList<DamageNumber> damageNumbers = new CopyOnWriteArrayList<>();
+
     private int damage = 2; // Damage dealt by the enemy
     private boolean knocked_back; // Whether the enemy is in a knockback state
     private float wander_angle = (float) (Math.random() * Math.PI * 2.0); // Angle for wandering behavior
@@ -29,8 +33,9 @@ public final class Enemy extends Entity {
      * Constructor for the Enemy class.
      * Initializes the enemy with position, size, health, speed, and sprite data.
      */
-    public Enemy(int x, int y, int w, int h, int max_hp, int max_speed, BufferedImage[] sprites) {
+    public Enemy(int x, int y, int w, int h, int max_hp, int max_speed, BufferedImage[] sprites, GamePanel gamePanel) {
         super(x, y, w, h, max_hp, max_speed, sprites);
+        this.gamePanel = gamePanel; // Store the reference to the game panel
     }
 
     /**
@@ -38,6 +43,7 @@ public final class Enemy extends Entity {
      * Handles behaviors such as steering, wandering, and separation.
      */
     public void update(float dt, Player player) {
+
         if (knocked_back) {
             // Handle knockback behavior if the enemy is in a knockback state
             handleKnockback(dt);
@@ -150,6 +156,9 @@ public final class Enemy extends Entity {
      * This method is a wrapper for the update method with a fixed delta time.
      */
     public void move(Player player) {
+        if (gamePanel.game_state != GameState.PLAYING) {
+            return;
+        }
         update(1.0f / 60.0f, player);
     }
 
@@ -251,6 +260,39 @@ public final class Enemy extends Entity {
     }
 
     /**
+     * Overrides the takeDamage method to add damage number visualizations
+     * 
+     * @param damage The amount of damage to apply
+     */
+    @Override
+    public void takeDamage(int damage) {
+        // Create and add a damage number at enemy's position before applying damage
+        // This ensures the damage number is created even if the enemy dies
+        DamageNumber damageNum = new DamageNumber(
+                (int) getCenterX(),
+                (int) getCenterY() - 20,
+                damage);
+        damageNumbers.add(damageNum);
+
+        // Apply damage after creating the damage number
+        super.takeDamage(damage);
+    }
+
+    /**
+     * Updates damage number effects
+     * 
+     * @param dt Delta time for frame-rate independence
+     */
+    public void updateDamageNumbers(float dt) {
+        for (DamageNumber damageNumber : new java.util.ArrayList<>(damageNumbers)) {
+            damageNumber.update(dt);
+            if (damageNumber.isDead()) {
+                damageNumbers.remove(damageNumber);
+            }
+        }
+    }
+
+    /**
      * Draws the enemy on the screen.
      * Renders the enemy as a red rectangle with a white outline.
      * If the enemy is in a knockback state, a yellow line indicates the knockback
@@ -274,6 +316,14 @@ public final class Enemy extends Entity {
                     (int) getCenterY(),
                     (int) (getCenterX() + x_velocity * 5),
                     (int) (getCenterY() + y_velocity * 5));
+        }
+        // Draw damage numbers with proper Graphics2D object
+        if (!damageNumbers.isEmpty()) {
+            Graphics2D g2d = (Graphics2D) g.create(); // Create a new graphics context to avoid affecting the main one
+            for (DamageNumber damageNumber : damageNumbers) {
+                damageNumber.draw(g2d);
+            }
+            g2d.dispose(); // Clean up
         }
     }
 }

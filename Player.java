@@ -3,27 +3,46 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
+import javax.swing.*;
 
 public class Player extends Entity {
-    // Player's current level
-    private int level;
-
-    // Array to store the player's high scores
-    private int high_scores[];
-
-    // Map to store the player's skills and their levels
-    private Map<Skill, Integer> skills;
+    // Player's skills
+    private final Map<String, Skill> skills;
+    private final LuminousPulse luminousPulse;
+    private final LightLance lightLance;
+    private final GamePanel parent;
 
     // Constant speed value for the player's movement
-    private static final int SPEED = 5;
-
-    // Constructor to initialize the player with position, size, health, speed, and
+    private static final int SPEED = 5; // Constructor to initialize the player with position, size, health, speed, and
     // sprites
-    public Player(int x, int y, int width, int height, int max_hp, int max_speed, BufferedImage[] sprites) {
+
+    public Player(int x, int y, int width, int height, int max_hp, int max_speed, BufferedImage[] sprites,
+            GamePanel parent) {
         super(x, y, width, height, max_hp, max_speed, sprites);
-        this.level = 1; // Initialize the player's level to 1
-        this.high_scores = new int[5]; // Initialize the high scores array with a size of 5
         this.skills = new HashMap<>(); // Initialize the skills map
+
+        // Initialize the Luminous Pulse skill
+        this.luminousPulse = new LuminousPulse(this);
+        this.skills.put("Luminous Pulse", luminousPulse);
+
+        // Initialize the Light Lance skill
+        this.lightLance = new LightLance(this);
+        this.skills.put("Light Lance", lightLance);
+        this.parent = parent; // Store the reference to the parent GamePanel
+    }
+
+    // Update method to handle skills and effects
+    public void update(float dt, List<Enemy> enemies) {
+        // Update the Luminous Pulse skill
+        if (luminousPulse != null) {
+            luminousPulse.update(dt, enemies);
+        }
+
+        // Update the Light Lance skill
+        if (lightLance != null) {
+            lightLance.update(dt, enemies);
+        }
     }
 
     // Method to handle key press events for player movement
@@ -94,18 +113,28 @@ public class Player extends Entity {
         else if (y > GamePanel.GAME_HEIGHT) {
             y = -HEIGHT;
         }
-    }
+    } // Override the draw method to render the player on the screen
 
-    // Override the draw method to render the player on the screen
     @Override
     public void draw(Graphics g) {
-        // Get the current mouse position
+        // Get the mouse position relative to the game panel
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+        SwingUtilities.convertPointFromScreen(mousePosition, parent);
 
         // Calculate the angle between the player and the mouse pointer
         double angle = Math.atan2(mousePosition.y - (y + HEIGHT / 2), mousePosition.x - (x + WIDTH / 2));
 
         Graphics2D g2d = (Graphics2D) g; // Cast Graphics to Graphics2D for advanced drawing
+
+        // Draw the Luminous Pulse effect beneath the player
+        if (luminousPulse != null) {
+            luminousPulse.draw(g2d);
+        } // Update Light Lance aim angle and draw it
+        if (lightLance != null) {
+            lightLance.setMousePosition(mousePosition);
+            lightLance.draw(g2d);
+        }
+
         g2d.setColor(Color.BLUE); // Set the player's color to blue
 
         // Save the current transformation of the graphics context
@@ -119,5 +148,10 @@ public class Player extends Entity {
 
         // Restore the original transformation
         g2d.setTransform(oldTransform);
+    }
+
+    // Method to get a skill by name
+    public Skill getSkill(String skillName) {
+        return skills.get(skillName);
     }
 }
