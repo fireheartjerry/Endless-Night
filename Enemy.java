@@ -1,13 +1,15 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class is used to represent enemy entities in the game and manages functions
+* like movement, knockback, and rendering
+*/
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * The Enemy class represents an enemy entity in the game.
- * It extends the Entity class and includes behavior for movement, knockback,
- * and rendering.
- */
 public final class Enemy extends Entity {
     // Constants for enemy behavior and physics
     private static final float MAX_SPEED = 2.4f; // Maximum movement speed

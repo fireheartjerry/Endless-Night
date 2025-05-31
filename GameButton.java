@@ -1,3 +1,9 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class is used to create the main screen buttons
+*/
+
 import java.awt.*;
 import javax.swing.*;
 

@@ -1,7 +1,12 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class provides the main game window
+*/
+
 import java.awt.*;
 import javax.swing.*;
 
-// The GameFrame class extends JFrame and serves as the main window for the game.
 public class GameFrame extends JFrame {
 
     GamePanel panel; // A panel where the game content will be displayed.
