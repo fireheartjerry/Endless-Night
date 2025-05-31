@@ -228,6 +228,30 @@ public class HowToPlayScreen extends JPanel {
                 "chaos_demon.png"
         };
 
+        String[] bossIcons = {
+                "void_titan.png",
+                "eclipse_harbinger.png",
+                "mist_stalker.png",
+                "night_devourer.png",
+                "anthonys_wrath.png"
+        };
+
+        String[] skillIcons = {
+                "luminous_pulse.png",
+                "light_lance.png",
+                "photon_orbs.png",
+                "angelic_summons.png",
+                "starfall_ritual.png"
+        };
+
+        String[] superIcons = {
+                "solar_flare.png",
+                "prismatic_ray.png",
+                "celestial_constellation.png",
+                "archangel.png",
+                "cosmic_cataclysm.png"
+        };
+
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         container.setOpaque(false);
@@ -250,40 +274,77 @@ public class HowToPlayScreen extends JPanel {
             groupLabel.setForeground(Color.WHITE);
             row.add(groupLabel);
             for (int i = 0; i < names.length; i++) {
-                JLabel icon = new JLabel() {
-                };
+                JPanel iconGroup = new JPanel(new GridLayout(names == skillNames ? 2 : 1, 1));
+                iconGroup.setOpaque(false);
+
+                JLabel icon = new JLabel();
                 icon.setPreferredSize(new Dimension(size, size));
-                                
+
+                String imagePath = null;
                 if (names == monsterNames) {
-                    // Use actual monster icons
-                    try {
-                        BufferedImage img = ImageIO.read(getClass().getResourceAsStream("./assets/images/bordered_sprites/" + monsterIcons[i]));
-                        icon.setIcon(new ImageIcon(img.getScaledInstance(size, size, Image.SCALE_SMOOTH)));
-                    } catch (Exception e) {
-                        // Fallback to placeholder if image loading fails
-                        BufferedImage placeholderImg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-                        Graphics2D g2d = placeholderImg.createGraphics();
-                        g2d.setColor(new Color(255, 0, 0, 100));
-                        g2d.fillRect(0, 0, size, size);
-                        g2d.setColor(Color.WHITE);
-                        g2d.drawRect(0, 0, size-1, size-1);
-                        g2d.dispose();
-                        icon.setIcon(new ImageIcon(placeholderImg));
-                    }
-                } else {
-                    // Use placeholder icons for bosses and skills
-                        BufferedImage placeholderImg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-                        Graphics2D g2d = placeholderImg.createGraphics();
-                        g2d.setColor(new Color(255, 0, 0, 100));
-                        g2d.fillRect(0, 0, size, size);
-                        g2d.setColor(Color.WHITE);
-                        g2d.drawRect(0, 0, size-1, size-1);
-                        g2d.dispose();
-                        icon.setIcon(new ImageIcon(placeholderImg));
+                    imagePath = "/assets/images/bordered_sprites/" + monsterIcons[i];
+                } else if (names == bossNames) {
+                    imagePath = "/assets/images/bordered_sprites/" + bossIcons[i];
+                } else if (names == skillNames) {
+                    imagePath = "/assets/images/bordered_sprites/" + skillIcons[i];
                 }
 
-                icon.setToolTipText(makeTip(names[i], tips[i]));
-                row.add(icon);
+                try {
+                    if (imagePath != null) {
+                        BufferedImage img = ImageIO.read(getClass().getResourceAsStream(imagePath));
+                        icon.setIcon(new ImageIcon(img.getScaledInstance(size, size, Image.SCALE_SMOOTH)));
+                    } else {
+                        throw new IOException("No image path specified");
+                    }
+                } catch (Exception e) {
+                    // Fallback to placeholder if image loading fails
+                    BufferedImage placeholderImg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = placeholderImg.createGraphics();
+                    g2d.setColor(new Color(255, 0, 0, 100));
+                    g2d.fillRect(0, 0, size, size);
+                    g2d.setColor(Color.WHITE);
+                    g2d.drawRect(0, 0, size - 1, size - 1);
+                    g2d.dispose();
+                    icon.setIcon(new ImageIcon(placeholderImg));
+                }
+
+                // Set tooltip text based on type
+                if (names == skillNames) {
+                    icon.setToolTipText(makeTip(names[i], tips[i] + "<br><br>Super version shown below."));
+                } else {
+                    icon.setToolTipText(makeTip(names[i], tips[i]));
+                }
+                
+                iconGroup.add(icon);
+
+                // Add super icon below the skill icon
+                if (names == skillNames) {
+                    JLabel superIcon = new JLabel();
+                    superIcon.setPreferredSize(new Dimension(size, size));
+
+                    try {
+                        String superImagePath = "/assets/images/bordered_sprites/" + superIcons[i];
+                        BufferedImage img = ImageIO.read(getClass().getResourceAsStream(superImagePath));
+                        superIcon.setIcon(new ImageIcon(img.getScaledInstance(size, size, Image.SCALE_SMOOTH)));
+                    } catch (Exception e) {
+                        BufferedImage placeholderImg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                        Graphics2D g2d = placeholderImg.createGraphics();
+                        g2d.setColor(new Color(0, 0, 255, 100));
+                        g2d.fillRect(0, 0, size, size);
+                        g2d.setColor(Color.WHITE);
+                        g2d.drawRect(0, 0, size - 1, size - 1);
+                        g2d.dispose();
+                        superIcon.setIcon(new ImageIcon(placeholderImg));
+                    }
+                    
+                    // Set tooltip for super icons
+                    superIcon.setToolTipText(makeTip("Super: " + names[i], 
+                        "This is the level 9 super version of " + names[i] + "."));
+                    
+                    iconGroup.add(superIcon);
+                }
+
+                row.add(iconGroup);
             }
             container.add(row);
         };
