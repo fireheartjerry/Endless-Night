@@ -7,7 +7,8 @@ import java.util.Random;
  * This class handles the rendering and animation of damage numbers that appear
  * when enemies take damage.
  */
-public class DamageNumber {    // Static constants for visual appearance
+public class DamageNumber {
+    // Static constants for visual appearance
     private static final Color TEXT_COLOR = new Color(255, 80, 120); // Brighter, more saturated red
     private static final Color GLOW_COLOR = new Color(255, 200, 200, 80); // Additional glow
     private static final Color SHADOW_COLOR = new Color(40, 10, 30, 200); // Darker shadow for contrast
@@ -59,7 +60,8 @@ public class DamageNumber {    // Static constants for visual appearance
      * Draws the damage number with visual effects
      * 
      * @param g The graphics context
-     */    public void draw(Graphics2D g) {
+     */    
+    public void draw(Graphics2D g) {
         float lifeRatio = life / (float) LIFE_SPAN;
         float alpha = lifeRatio > 0.3f ? 1f : (lifeRatio / 0.3f);
 

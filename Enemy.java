@@ -21,12 +21,11 @@ public final class Enemy extends Entity {
     private static final float SEPARATION_RADIUS = 100f; // Radius for separation behavior
     private static final float RECOVERY_RATE = 0.05f; // Recovery rate after knockback
 
-    // Collection of damage numbers for this enemy
+    // Instance variables
     private final CopyOnWriteArrayList<DamageNumber> damageNumbers = new CopyOnWriteArrayList<>();
-
     private int damage = 2; // Damage dealt by the enemy
-    private boolean knocked_back; // Whether the enemy is in a knockback state
-    private float wander_angle = (float) (Math.random() * Math.PI * 2.0); // Angle for wandering behavior
+    private boolean knockedBack; // Whether the enemy is in a knockback state
+    private float wanderAngle = (float) (Math.random() * Math.PI * 2.0); // Angle for wandering behavior
     private GamePanel gamePanel; // Reference to the game panel
 
     /**
@@ -43,8 +42,7 @@ public final class Enemy extends Entity {
      * Handles behaviors such as steering, wandering, and separation.
      */
     public void update(float dt, Player player) {
-
-        if (knocked_back) {
+        if (knockedBack) {
             // Handle knockback behavior if the enemy is in a knockback state
             handleKnockback(dt);
             return;
@@ -64,76 +62,77 @@ public final class Enemy extends Entity {
         }
 
         // Calculate direction to the player
-        float to_x = (float) (player.getCenterX() - getCenterX());
-        float to_y = (float) (player.getCenterY() - getCenterY());
-        float dist = (float) Math.hypot(to_x, to_y);
+        float toX = (float) (player.getCenterX() - getCenterX());
+        float toY = (float) (player.getCenterY() - getCenterY());
+        float dist = (float) Math.hypot(toX, toY);
 
         // Normalize direction vector
         if (dist > 1e-3f) {
-            to_x /= dist;
-            to_y /= dist;
+            toX /= dist;
+            toY /= dist;
         }
 
         // Calculate desired speed based on distance to the player
-        float desired_speed;
+        float desiredSpeed;
         if (dist < ARRIVAL_RADIUS) {
             // Smooth slowing down when near the player
             float t = dist / ARRIVAL_RADIUS;
-            desired_speed = MAX_SPEED * t * t * (3 - 2 * t);
+            desiredSpeed = MAX_SPEED * t * t * (3 - 2 * t);
         } else {
-            desired_speed = MAX_SPEED;
+            desiredSpeed = MAX_SPEED;
         }
 
         // Calculate desired velocity
-        float desired_x = to_x * desired_speed;
-        float desired_y = to_y * desired_speed;
+        float desiredX = toX * desiredSpeed;
+        float desiredY = toY * desiredSpeed;
 
         // Add wandering behavior
-        wander_angle += (Math.random() - 0.5f) * WANDER_JITTER * dt * 60f;
-        wander_angle *= 0.98f; // Dampen wandering angle
-        float wander_strength = Math.min(1.0f, dist / 200.0f);
-        desired_x += Math.cos(wander_angle) * WANDER_RADIUS * wander_strength;
-        desired_y += Math.sin(wander_angle) * WANDER_RADIUS * wander_strength;
+        wanderAngle += (Math.random() - 0.5f) * WANDER_JITTER * dt * 60f;
+        wanderAngle *= 0.98f; // Dampen wandering angle
+        float wanderStrength = Math.min(1.0f, dist / 200.0f);
+        desiredX += Math.cos(wanderAngle) * WANDER_RADIUS * wanderStrength;
+        desiredY += Math.sin(wanderAngle) * WANDER_RADIUS * wanderStrength;
 
         // Separation behavior to avoid crowding with other enemies
-        float sep_x = 0;
-        float sep_y = 0;
+        float sepX = 0;
+        float sepY = 0;
         int neighbors = 0;
         if (gamePanel != null) {
             List<Enemy> enemies = gamePanel.enemies;
             for (Enemy other : enemies) {
-                if (other == this)
+                if (other == this) {
                     continue;
+                }
                 float dx = (float) (getCenterX() - other.getCenterX());
                 float dy = (float) (getCenterY() - other.getCenterY());
                 float d = (float) Math.hypot(dx, dy);
                 if (d > 0 && d < SEPARATION_RADIUS) {
                     float factor = SEPARATION_WEIGHT * (SEPARATION_RADIUS / (d * d));
-                    sep_x += (dx / d) * factor;
-                    sep_y += (dy / d) * factor;
+                    sepX += (dx / d) * factor;
+                    sepY += (dy / d) * factor;
                     neighbors++;
                 }
             }
             if (neighbors > 0) {
                 // Normalize separation vector and limit its magnitude
-                float sep_mag = (float) Math.hypot(sep_x, sep_y);
-                if (sep_mag > MAX_SPEED) {
-                    sep_x = (sep_x / sep_mag) * MAX_SPEED;
-                    sep_y = (sep_y / sep_mag) * MAX_SPEED;
+                float sepMag = (float) Math.hypot(sepX, sepY);
+                if (sepMag > MAX_SPEED) {
+                    sepX = (sepX / sepMag) * MAX_SPEED;
+                    sepY = (sepY / sepMag) * MAX_SPEED;
                 }
                 // Blend separation behavior with desired velocity
-                desired_x = desired_x * 0.8f + sep_x * 0.2f;
-                desired_y = desired_y * 0.8f + sep_y * 0.2f;
+                desiredX = desiredX * 0.8f + sepX * 0.2f;
+                desiredY = desiredY * 0.8f + sepY * 0.2f;
             }
         }
 
         // Steering behavior to adjust velocity towards the desired velocity
-        float dot = to_x * x_velocity + to_y * y_velocity;
-        float dynamic_responsiveness = RESPONSIVENESS * (1.0f + (1.0f - Math.max(0, dot)) * 0.5f);
-        float steer_x = desired_x - x_velocity;
-        float steer_y = desired_y - y_velocity;
-        x_velocity += steer_x * dynamic_responsiveness * dt * 60f;
-        y_velocity += steer_y * dynamic_responsiveness * dt * 60f;
+        float dot = toX * x_velocity + toY * y_velocity;
+        float dynamicResponsiveness = RESPONSIVENESS * (1.0f + (1.0f - Math.max(0, dot)) * 0.5f);
+        float steerX = desiredX - x_velocity;
+        float steerY = desiredY - y_velocity;
+        x_velocity += steerX * dynamicResponsiveness * dt * 60f;
+        y_velocity += steerY * dynamicResponsiveness * dt * 60f;
 
         // Limit speed to maximum
         float speed = (float) Math.hypot(x_velocity, y_velocity);
@@ -195,7 +194,7 @@ public final class Enemy extends Entity {
         // End knockback state if velocity is below threshold
         if (Math.hypot(x_velocity, y_velocity) < MIN_SPEED) {
             x_velocity = y_velocity = 0f;
-            knocked_back = false;
+            knockedBack = false;
         }
 
         // Wrap around screen edges
@@ -215,14 +214,16 @@ public final class Enemy extends Entity {
      * out of bounds.
      */
     private void wrap() {
-        if (x < -WIDTH)
+        if (x < -WIDTH) {
             x = GamePanel.GAME_WIDTH;
-        else if (x > GamePanel.GAME_WIDTH)
+        } else if (x > GamePanel.GAME_WIDTH) {
             x = -WIDTH;
-        if (y < -HEIGHT)
+        }
+        if (y < -HEIGHT) {
             y = GamePanel.GAME_HEIGHT;
-        else if (y > GamePanel.GAME_HEIGHT)
+        } else if (y > GamePanel.GAME_HEIGHT) {
             y = -HEIGHT;
+        }
     }
 
     /**
@@ -232,7 +233,7 @@ public final class Enemy extends Entity {
     public void applyKnockback(float vx, float vy) {
         x_velocity = vx;
         y_velocity = vy;
-        knocked_back = true;
+        knockedBack = true;
     }
 
     /**
@@ -240,7 +241,7 @@ public final class Enemy extends Entity {
      * Returns true if the enemy is currently being knocked back.
      */
     public boolean isKnockedBack() {
-        return knocked_back;
+        return knockedBack;
     }
 
     /**
@@ -248,7 +249,7 @@ public final class Enemy extends Entity {
      * Provides an alternative method name for checking knockback state.
      */
     public boolean isInKnockbackState() {
-        return knocked_back;
+        return knockedBack;
     }
 
     /**
@@ -309,7 +310,7 @@ public final class Enemy extends Entity {
         g.drawRect(x, y, width, height);
 
         // Draw knockback indicator if in knockback state
-        if (knocked_back) {
+        if (knockedBack) {
             g.setColor(Color.YELLOW);
             g.drawLine(
                     (int) getCenterX(),
@@ -317,6 +318,7 @@ public final class Enemy extends Entity {
                     (int) (getCenterX() + x_velocity * 5),
                     (int) (getCenterY() + y_velocity * 5));
         }
+
         // Draw damage numbers with proper Graphics2D object
         if (!damageNumbers.isEmpty()) {
             Graphics2D g2d = (Graphics2D) g.create(); // Create a new graphics context to avoid affecting the main one
