@@ -1,12 +1,13 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class is used to show the numbers representing damage taken when enemies are hit
+*/
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Random;
 
-/**
- * A visual representation of damage dealt to enemies.
- * This class handles the rendering and animation of damage numbers that appear
- * when enemies take damage.
- */
 public class DamageNumber {
     // Static constants for visual appearance
     private static final Color TEXT_COLOR = new Color(255, 80, 120); // Brighter, more saturated red

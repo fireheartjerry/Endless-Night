@@ -1,8 +1,13 @@
+/*
+* Authors: Jerry Li & Victor Jiang
+* Date: June 13, 2025
+* Description: This class is used to represent all game entities with functions like position, velocity
+* health, etc.
+*/
+
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-// The Entity class represents a game entity with properties such as position, velocity, health, and more.
-// It extends the GameObject class and adds additional functionality specific to entities.
 public class Entity extends GameObject {
     // The maximum health points of the entity.
     public final int MAX_HP;
